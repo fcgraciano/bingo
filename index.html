@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bingo Fernéko</title>
+    <style>
+        body {
+            display: grid;
+            grid-template-columns: 300px auto;
+            column-gap: 5px;
+        }
+
+        .cartela {
+            display: grid;
+            grid-template-columns: 50px 50px 50px 50px 50px;
+            grid-template-rows: 50px 50px 50px 50px 50px 50px;
+            border: 1px solid;
+            width: 270px;
+            padding: 15px;
+            gap: 5px;
+            background-color: yellow;
+        }
+
+        .grid-item {
+            border: 1px solid black;
+            font-size: 40px;
+            text-align: center;
+            vertical-align: middle;
+            border-radius: 10px;
+        }
+
+        .sem-borda {
+            border: 0;
+        }
+
+        .letras {
+            font-family: 'Engravers MT';
+        }
+
+        .todos-numeros {
+            /* border:2px double; */
+            display: grid;
+            grid-template-rows: repeat(50px, 15);
+        }
+
+        #QuadroSorteio {
+            display: grid;
+            grid-template-columns: repeat(15, auto);
+            grid-template-rows: repeat(5, auto);
+            gap: 5px;
+            background-color: rgb(222, 196, 171);
+            border: 5px solid rgb(122, 152, 172);
+        }
+
+        #QuadroSorteio>div {
+            display: table-cell;
+            /* border:3px solid rgba(0,0,0,0.3);; */
+            text-align: center;
+            vertical-align: middle;
+            font-size: 35px;
+            color: rgba(0, 0, 0, 0.3);
+        }
+
+        #btn-gerar-cartela {
+            width: 150px;
+            height: 75px;
+            margin: 0 auto
+        }
+
+        #btn-sortear {
+            width: 150px;
+            height: 75px;
+            margin: 0 auto
+        }
+    </style>
+    <link href="modal.css" rel="stylesheet" />
+</head>
+
+<body>
+
+
+    <div class="cartela">
+        <div class="grid-item sem-borda letras">B</div>
+        <div class="grid-item sem-borda letras">I</div>
+        <div class="grid-item sem-borda letras">N</div>
+        <div class="grid-item sem-borda letras">G</div>
+        <div class="grid-item sem-borda letras">O</div>
+
+        <div class="grid-item b0"></div>
+        <div class="grid-item i0"></div>
+        <div class="grid-item n0"></div>
+        <div class="grid-item g0"></div>
+        <div class="grid-item o0"></div>
+
+        <div class="grid-item b1"></div>
+        <div class="grid-item i1"></div>
+        <div class="grid-item n1"></div>
+        <div class="grid-item g1"></div>
+        <div class="grid-item o1"></div>
+
+        <div class="grid-item b2"></div>
+        <div class="grid-item i2"></div>
+        <div class="grid-item  sem-borda n2">
+            <img src="coringa.png" height="50" width="50" />
+        </div>
+        <div class="grid-item g2"></div>
+        <div class="grid-item o2"></div>
+
+        <div class="grid-item b3"></div>
+        <div class="grid-item i3"></div>
+        <div class="grid-item n3"></div>
+        <div class="grid-item g3"></div>
+        <div class="grid-item o3"></div>
+
+        <div class="grid-item b4"></div>
+        <div class="grid-item i4"></div>
+        <div class="grid-item n4"></div>
+        <div class="grid-item g4"></div>
+        <div class="grid-item o4"></div>
+    </div>
+    <div id="QuadroSorteio">
+
+    </div>
+    <button onclick="GerarCartela()" id="btn-gerar-cartela">Gerar Cartela</button>
+    <div class="todos-numeros" style="display:flex">
+        <div id="display"></div>
+        <button onclick="sortear()" id="btn-sortear">Sortear</button>
+    </div>
+
+
+    <div id="dv-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1>!!!!!!!!!!!! B I N G O !!!!!!!!!!</h1>
+            </div>
+
+            <div class="modal-body">
+
+                PARABÉNS! VOCÊ VENCEU
+                <br>
+                SEU PREMIO<br>
+                <div style="display:flex">
+                    <img src="vinho.jpg" alt="" width="300" height="160" />
+                    <img src="frango-assado.jpg" alt="" width="300" height="160" />
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('dv-modal')">Fechar</button>
+            </div>
+        </div>
+    </div>
+    <script src="modal.js"></script>
+    <script>
+        var pontuacao = 0;
+        var quadroSorteio = document.getElementById("QuadroSorteio")
+        for (var i = 1; i <= 75; i++) {
+            var novoElemento = document.createElement("div");
+            novoElemento.innerHTML = i
+            novoElemento.id = "s" + i
+            quadroSorteio.append(novoElemento)
+        }
+        var cartela = []
+        var sorteio = []
+        function GerarArray(NumeroInicial, quantidade) {
+            var retorno = []
+            for (var i = 0; i < quantidade; i++) {
+                retorno.push(NumeroInicial)
+                NumeroInicial++;
+            }
+            return MisturarArray(retorno)
+        }
+
+        function MisturarArray(array) {
+            var aleatorio
+            var cont = array.length
+            var auxiliar
+            while (cont != 0) {
+                aleatorio = NumeroAleatorio(1, array.length)
+                cont--
+                auxiliar = array[cont]
+                array[cont] = array[aleatorio]
+                array[aleatorio] = auxiliar
+            }
+            return array
+
+        }
+
+
+        function NumeroAleatorio(numeroMinimo, numeroMaximo) {
+            var retorno = Math.floor(Math.random() * numeroMaximo)
+            if (retorno > 0 && retorno >= numeroMinimo && retorno <= numeroMaximo) {
+                return retorno
+            } else {
+                return NumeroAleatorio(numeroMinimo, numeroMaximo)
+            }
+        }
+        function sortear() {
+            //esse é o numero sorteado
+            var numeroSorteado = sorteio[0]
+            document.getElementById("display").innerHTML = "<h1>Número sorteado: "+numeroSorteado+"</h1>"
+            //remove o numero sorteado
+            sorteio.shift()
+
+            //marca o numero sorteado no Quadro do Sorteio
+            var elementoSorteado = document.getElementById("s" + numeroSorteado)
+            elementoSorteado.style.color = "#000";
+            elementoSorteado.style.backgroundColor = "#FFF";
+
+            var numeroMarcadoCartela = document.getElementById("c" + numeroSorteado)
+            if (numeroMarcadoCartela != null) {
+                numeroMarcadoCartela.style.backgroundColor = "rgba(255,0,0,0.5)"
+                pontuacao++
+            }
+
+            if (pontuacao == 24) {
+                openModal('#div-modal');
+                //Acabou o jogo
+            }
+
+
+        }
+        function GerarCartela() {
+            //Gera o array do sorteio
+            sorteio = GerarArray(1, 75)
+
+            //limpa as DIVs que já foram sorteadas
+            var div_sorteios = document.querySelectorAll("#QuadroSorteio > div");
+            div_sorteios.forEach(element => {
+                element.style.backgroundColor = "rgba(0,0,0,0.3)"
+                element.style.color = "rgba(0,0,0,0.3)"
+            });
+
+            //limpa os numeros marcados na cartela anterior
+            var div_sorteios = document.querySelectorAll(".cartela > div");
+            div_sorteios.forEach(element => {
+                element.style.backgroundColor = "rgb(255,255,0)"
+            });
+
+            //reseta a pontuação
+            pontuacao = 0
+
+
+            for (var i = 0; i < 5; i++) {
+                cartela[i] = []
+                if (i == 0) {
+                    cartela[i] = GerarArray(1, 15)
+
+                    for (var j = 0; j < 5; j++) {
+                        document.getElementsByClassName("b" + j)[0].innerText = cartela[i][j]
+                        document.getElementsByClassName("b" + j)[0].id = "c" + cartela[i][j]
+                    }
+                }
+                else if (i == 1) {
+                    cartela[i] = GerarArray(16, 15)
+                    for (var j = 0; j < 5; j++) {
+
+                        document.getElementsByClassName("i" + j)[0].innerText = cartela[i][j]
+                        document.getElementsByClassName("i" + j)[0].id = "c" + cartela[i][j]
+                    }
+                }
+                else if (i == 2) {
+                    cartela[i] = GerarArray(31, 15)
+                    for (var j = 0; j < 5; j++) {
+                        if (j == 2) {
+                            continue
+                        }
+                        else {
+                            //document.getElementById("n"+j).innerText = cartela[i][j]
+                            document.getElementsByClassName("n" + j)[0].innerText = cartela[i][j]
+                            document.getElementsByClassName("n" + j)[0].id = "c" + cartela[i][j]
+                        }
+                    }
+                }
+                else if (i == 3) {
+                    cartela[i] = GerarArray(46, 15)
+                    for (var j = 0; j < 5; j++) {
+                        document.getElementsByClassName("g" + j)[0].innerText = cartela[i][j]
+                        document.getElementsByClassName("g" + j)[0].id = "c" + cartela[i][j]
+
+                    }
+                }
+                else if (i == 4) {
+                    cartela[i] = GerarArray(61, 15)
+                    for (var j = 0; j < 5; j++) {
+                        document.getElementsByClassName("o" + j)[0].innerText = cartela[i][j]
+                        document.getElementsByClassName("o" + j)[0].id = "c" + cartela[i][j]
+
+                    }
+                }
+
+            }
+        }
+
+    </script>
+</body>
+
+</html>
